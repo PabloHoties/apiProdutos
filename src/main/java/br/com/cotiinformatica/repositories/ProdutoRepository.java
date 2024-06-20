@@ -24,6 +24,10 @@ public class ProdutoRepository {
 		statement.setInt(4, produto.getCategoria().getId());
 		statement.execute();
 
+		ResultSet resultSet = statement.getGeneratedKeys();
+		if (resultSet.next())
+			produto.setId(resultSet.getInt("1"));
+		
 		connection.close();
 	}
 
@@ -60,7 +64,7 @@ public class ProdutoRepository {
 
 		PreparedStatement statement = connection
 				.prepareStatement("SELECT p.id AS idproduto, p.nome AS nomeproduto, p.preco, p.quantidade, c.id AS idcategoria, c.nome AS nomecategoria from produto p "
-						+ "INNER JOIN categoria c ON c.id = p.categoria_id WHERE id=?");
+						+ "INNER JOIN categoria c ON c.id = p.categoria_id WHERE p.id=?");
 		statement.setInt(1, id);
 
 		ResultSet resultSet = statement.executeQuery();
