@@ -17,7 +17,7 @@ public class ProdutoRepository {
 		Connection connection = ConnectionFactory.getConnection();
 
 		PreparedStatement statement = connection
-				.prepareStatement("INSERT INTO produto (nome, preco, quantidade, categoria_id) VALUES (?,?,?,?)");
+				.prepareStatement("INSERT INTO produto (nome, preco, quantidade, categoria_id) VALUES (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 		statement.setString(1, produto.getNome());
 		statement.setDouble(2, produto.getPreco());
 		statement.setInt(3, produto.getQuantidade());
@@ -26,7 +26,7 @@ public class ProdutoRepository {
 
 		ResultSet resultSet = statement.getGeneratedKeys();
 		if (resultSet.next())
-			produto.setId(resultSet.getInt("1"));
+			produto.setId(resultSet.getInt(1));
 		
 		connection.close();
 	}
