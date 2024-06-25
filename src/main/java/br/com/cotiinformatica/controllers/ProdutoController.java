@@ -20,11 +20,11 @@ import br.com.cotiinformatica.repositories.ProdutoRepository;
 @RestController
 @RequestMapping("/api/produtos")
 public class ProdutoController {
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
 
-	@PostMapping("criar")
+	@PostMapping()
 	public ProdutoResponseDto post(@RequestBody ProdutoRequestDto request) throws Exception {
 
 		Produto produto = modelMapper.map(request, Produto.class);
@@ -35,20 +35,37 @@ public class ProdutoController {
 		produtoRepository.create(produto);
 
 		Produto produtoCadastrado = produtoRepository.findById(produto.getId());
-		
+
 		return modelMapper.map(produtoCadastrado, ProdutoResponseDto.class);
 	}
 
-	@PutMapping()
-	public void put() throws Exception {
+	@PutMapping("{id}")
+	public ProdutoResponseDto put(@PathVariable Integer id, @RequestBody ProdutoRequestDto request)
+			throws Exception {
 
-		// TODO
+		Produto produto = modelMapper.map(request, Produto.class);
+		produto.setId(id);
+		
+		produto.setCategoria(new Categoria());
+		produto.getCategoria().setId(request.getCategoriaId());
+		
+		ProdutoRepository produtoRepository = new ProdutoRepository();
+		produtoRepository.update(produto);
+		
+		Produto produtoAtualizado = produtoRepository.findById(produto.getId());
+		
+		return modelMapper.map(produtoAtualizado, ProdutoResponseDto.class);
 	}
 
-	@DeleteMapping()
-	public void delete(@PathVariable("id") Integer id) throws Exception {
+	@DeleteMapping("{id}")
+	public ProdutoResponseDto delete(@PathVariable Integer id) throws Exception {
 
-		// TODO
+		ProdutoRepository produtoRepository = new ProdutoRepository();
+		Produto produto = produtoRepository.findById(id);
+		
+		produtoRepository.delete(id);
+		
+		return modelMapper.map(produto, ProdutoResponseDto.class);
 	}
 
 	/*
