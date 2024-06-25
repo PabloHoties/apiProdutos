@@ -94,7 +94,7 @@ public class ProdutoRepository {
 
 		PreparedStatement statement = connection.prepareStatement(
 				"SELECT p.id AS idproduto, p.nome AS nomeproduto, p.preco, p.quantidade, c.id AS idcategoria, c.nome AS nomecategoria from produto p "
-				+ "INNER JOIN categoria c ON c.id = p.categoria_id ORDER BY nome ASC");
+				+ "INNER JOIN categoria c ON c.id = p.categoria_id ORDER BY nomeproduto ASC");
 
 		ResultSet resultSet = statement.executeQuery();
 

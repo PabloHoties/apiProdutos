@@ -1,5 +1,8 @@
 package br.com.cotiinformatica.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,20 +43,19 @@ public class ProdutoController {
 	}
 
 	@PutMapping("{id}")
-	public ProdutoResponseDto put(@PathVariable Integer id, @RequestBody ProdutoRequestDto request)
-			throws Exception {
+	public ProdutoResponseDto put(@PathVariable Integer id, @RequestBody ProdutoRequestDto request) throws Exception {
 
 		Produto produto = modelMapper.map(request, Produto.class);
 		produto.setId(id);
-		
+
 		produto.setCategoria(new Categoria());
 		produto.getCategoria().setId(request.getCategoriaId());
-		
+
 		ProdutoRepository produtoRepository = new ProdutoRepository();
 		produtoRepository.update(produto);
-		
+
 		Produto produtoAtualizado = produtoRepository.findById(produto.getId());
-		
+
 		return modelMapper.map(produtoAtualizado, ProdutoResponseDto.class);
 	}
 
@@ -62,22 +64,30 @@ public class ProdutoController {
 
 		ProdutoRepository produtoRepository = new ProdutoRepository();
 		Produto produto = produtoRepository.findById(id);
-		
+
 		produtoRepository.delete(id);
+
+		return modelMapper.map(produto, ProdutoResponseDto.class);
+	}
+
+	@GetMapping("{id}")
+	public ProdutoResponseDto getById(@PathVariable Integer id) throws Exception {
+
+		ProdutoRepository produtoRepository = new ProdutoRepository();
+		Produto produto = produtoRepository.findById(id);
 		
 		return modelMapper.map(produto, ProdutoResponseDto.class);
 	}
 
-	/*
-	 * @GetMapping() public void getById(@PathVariable("id") Integer id) throws
-	 * Exception {
-	 * 
-	 * // TODO }
-	 */
+	@GetMapping
+	public List<ProdutoResponseDto> getAll() throws Exception {
 
-	@GetMapping()
-	public void getAll() {
+		ProdutoRepository produtoRepository = new ProdutoRepository();
+		List<Produto> produtos = produtoRepository.findAll();
 
-		// TODO
+		List<ProdutoResponseDto> response = produtos.stream()
+				.map(produto -> modelMapper.map(produto, ProdutoResponseDto.class)).collect(Collectors.toList());
+
+		return response;
 	}
 }
